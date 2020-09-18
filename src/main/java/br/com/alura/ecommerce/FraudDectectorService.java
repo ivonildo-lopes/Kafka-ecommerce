@@ -7,8 +7,12 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  * This Class represent CONSUMER
@@ -28,9 +32,9 @@ public class FraudDectectorService {
                     System.out.println("===========Processing NEW ORDER=================");
                     System.out.println("OFFISET: " + record.offset());
                     System.out.println("PARTITION: " +record.partition());
-                    System.out.println("TIME: " + record.timestamp());
+                    System.out.println("TIME: " + Instant.ofEpochMilli(record.timestamp()));
                     System.out.println("KEY: " + record.key());
-                    System.out.println("VALUE: " + record.key());
+                    System.out.println("VALUE: " + record.value());
                     System.out.println("=================================================");
                     Thread.sleep(3000);
                     System.out.println("Order Processed");
@@ -51,6 +55,10 @@ public class FraudDectectorService {
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         /*informando o grupo do consumer*/
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG,FraudDectectorService.class.getSimpleName());
+        /*informando o nome do consumidor*/
+        properties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG , FraudDectectorService.class.getSimpleName() + " - " + UUID.randomUUID().toString());
+        /*informando o maximo de record(registros) que quer consumir - obs.: consome uma msg e comita*/
+        properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG , "1");
         return properties;
     }
 }
