@@ -1,5 +1,6 @@
 package br.com.alura.ecommerce;
 
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -18,21 +19,30 @@ public class NewOrderMain {
         var producer = new KafkaProducer<String, String>(getProperties());
 
         String value = "teste";
+
         var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER",value, value);
-        producer.send(record, (data, ex) -> {
-                if (Objects.nonNull(ex)){
-                    ex.printStackTrace();
-                    return;
-                }
+        producer.send(record, getCallback()).get();
+
+        var email = "Thanks you for your order! We are processing your order ";
+        var emailRecord = new ProducerRecord<>("ECOMMERCE_SEND_EMAIL",email, email);
+        producer.send(emailRecord, getCallback()).get();
+
+
+    }
+
+    private static Callback getCallback() {
+        return (data, ex) -> {
+            if (Objects.nonNull(ex)) {
+                ex.printStackTrace();
+                return;
+            }
             System.out.println("===========SUCCESS NEW ORDER=====================");
             System.out.println("TOPIC: " + data.topic() +
-                    " <> " + "OFFISET: " +  data.offset() +
+                    " <> " + "OFFISET: " + data.offset() +
                     " <> " + "PARTITION: " + data.partition() +
                     " <> " + "Timestamp: " + data.timestamp());
             System.out.println("==================================================");
-           }
-        ).get();
-
+        };
     }
 
     private static Properties getProperties() {
