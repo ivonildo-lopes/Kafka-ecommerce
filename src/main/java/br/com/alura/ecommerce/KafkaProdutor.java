@@ -11,14 +11,14 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-class KafkaProdutor implements Closeable {
-    private final KafkaProducer<String, String> producer;
+class KafkaProdutor<T> implements Closeable {
+    private final KafkaProducer<String, T> producer;
 
      KafkaProdutor() {
         this.producer = new KafkaProducer<>(getProperties());
     }
 
-    public void send(String topic, String key, String value) throws ExecutionException, InterruptedException {
+    public void send(String topic, String key, T value) throws ExecutionException, InterruptedException {
         var record = new ProducerRecord<>(topic,key, value);
         producer.send(record, getCallback()).get();
     }
@@ -44,8 +44,8 @@ class KafkaProdutor implements Closeable {
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"127.0.0.1:9092");
         /*informando o Serializador da chave para bytes*/
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        /*informando o Serializador da chave para bytes*/
-        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        /*informando o Serializador do valor para bytes*/
+        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, GsonSerializer.class.getName());
         return properties;
     }
 

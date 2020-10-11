@@ -15,6 +15,9 @@ ab -n 2000 -c 50 localhost:8080/v1/restaurantes
 #CRIA UM TOPICO
 .\bin\windows\kafka-topics.bat -create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic LOJA_NOVO_PEDIDO
 
+# ALTERA NUMERO DE PARTIÇÕES DE UM TOPICO EXISTENTE
+.\bin\windows\kafka-topics.bat --alter --zookeeper localhost:2181 --topic LOJA_NOVO_PEDIDO --partitions 3
+
 #CRIA UM PRODUCER
 .\bin\windows\kafka-console-producer.bat --broker-list localhost:9092 --topic LOJA_NOVO_PEDIDO
 
@@ -28,9 +31,6 @@ ab -n 2000 -c 50 localhost:8080/v1/restaurantes
 
 #DESCREVE TODOS OS TOPICOS
 .\bin\windows\kafka-topics.bat  --bootstrap-server localhost:9092 --describe
-
-#ALTERA A QUANTIDADE DE PARTIÇÃO DE UM TOPICO
-.\bin\windows\kafka-topics.bat --alter --zookeeper localhost:2181 --topic ECOMMERCE_NEW_ORDER --partitions 3
 
 #DESCREVE TODOS OS GRUPOS
 .\bin\windows\kafka-consumer-groups.bat --all-groups --bootstrap-server localhost:9092 --describe

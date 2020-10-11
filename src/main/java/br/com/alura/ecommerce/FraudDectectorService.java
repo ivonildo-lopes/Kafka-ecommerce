@@ -10,7 +10,7 @@ public class FraudDectectorService {
 
     public static void main(String[] args) throws InterruptedException {
         var fraudService = new FraudDectectorService();
-        try(var service = new KafkaService(FraudDectectorService.class.getSimpleName(),
+        try(var service = new KafkaService(FraudDectectorService.class.getSimpleName(), 
                 "ECOMMERCE_NEW_ORDER",
                 fraudService::parse)){
             service.run();
